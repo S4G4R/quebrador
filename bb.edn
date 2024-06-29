@@ -1,1 +1,2 @@
-{:paths ["src"]}
+{:paths ["src"]
+ :deps {hexdump/hexdump {:mvn/version "0.1.0"}}}
