@@ -1,6 +1,7 @@
 (ns quebrador.main
   (:require [clojure.string :as string]
             [babashka.fs :as fs]
+            [babashka.cli :as cli]
             [hexdump.core :as hex])
   (:gen-class))
 
@@ -30,15 +31,36 @@
       (= 0x04034b50)))
 
 
-(defn -main [& [file-path]]
-  (cond
-    (not file-path)
-    (prn "You must provide a file path")
+(defn show-help
+  "Print help menu"
+  [spec]
+  (println
+   (cli/format-opts (merge spec {:order (vec (keys (:spec spec)))}))))
 
-    (not (fs/exists? file-path))
-    (prn "File does not exist")
 
-    (zip-file? file-path)
-    (prn "Has zip headers.")
+(def cli-spec
+  "Defines the Babashka spec for the command line arguments"
+  {:spec
+   {:file {:coerce :string
+           :desc "zip file to crack"
+           :alias :f
+           :validate #(and (fs/exists? %) (zip-file? %))
+           :require true}}
+   :error-fn
+   (fn [{:keys [type cause msg option]}]
+     (when (= :org.babashka/cli type)
+       (case cause
+         :require
+         (println
+          (format "Missing required argument: --%s\n" (name option)))
+         :validate
+         (println
+          (format "%s does not exist or is not a zip file!\n" msg))))
+     (System/exit 1))})
 
-    :else (prn "Does not have zip headers.")))
+
+(defn -main [& args]
+  (if (or (:help (cli/parse-opts args)) (:h (cli/parse-opts args)))
+    (show-help cli-spec)
+    (let [_opts (cli/parse-opts args cli-spec)]
+      (println "Has zip headers."))))

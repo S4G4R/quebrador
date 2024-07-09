@@ -11,5 +11,5 @@ Reference: [Coding Challenge 66](https://codingchallenges.substack.com/p/coding-
 ### Usage
 
 ```bash
-bb -m quebrador.main file.zip
+bb -m quebrador.main -f file.zip
 ```
