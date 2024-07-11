@@ -6,10 +6,19 @@ Reference: [Coding Challenge 66](https://codingchallenges.substack.com/p/coding-
 
 ### Prerequisites
 
+[unzip](https://linux.die.net/man/1/unzip)
 [Babashka](https://github.com/babashka/babashka)
 
 ### Usage
 
+#### Help Menu
+
 ```bash
-bb -m quebrador.main -f file.zip
+bb -m quebrador.main -h
+```
+
+#### Dictionary Attack
+
+```bash
+bb -m quebrador.main -d dictionary.txt -f file.zip
 ```
